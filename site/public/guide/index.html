@@ -78,6 +78,13 @@ h1 .n{color:var(--cobalt)}
 .dark .hint{color:var(--pale);background:#0B0B0D}
 .act{font-family:var(--mono);font-size:15px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;border:1.5px solid var(--ink);background:var(--off);color:var(--ink);padding:11px 18px;border-radius:3px}
 .act.on{background:var(--cobalt);border-color:var(--cobalt);color:#fff}
+.mt-row{display:flex;gap:22px;align-items:flex-start}
+.mt-row>b{flex:none;width:46px;height:46px;border-radius:50%;border:2.5px solid var(--cobalt);color:var(--cobalt);display:flex;align-items:center;justify-content:center;font:700 18px var(--mono)}
+.mt-row h3{margin:0 0 6px;font-family:var(--head);font-weight:400;text-transform:uppercase;font-size:32px;line-height:1}
+.mt-row p{margin:0;font-size:20px;line-height:1.45}
+.mt-link{display:flex;flex-direction:column;gap:5px;width:100%;text-align:left;padding:13px 18px;border-color:var(--cobalt)}
+.mt-link span{color:var(--cobalt)}.mt-link span:after{content:" →"}
+.mt-link i{font-style:normal;font-weight:400;text-transform:none;letter-spacing:0;font-family:var(--body);font-size:16px}
 .dark .act{border-color:var(--off);color:var(--off);background:transparent}
 .dark .act.on{background:var(--cobalt);border-color:var(--cobalt);color:#fff}
 .panel{position:absolute;border:1.5px solid var(--ink);background:var(--off);border-radius:4px}
@@ -257,6 +264,29 @@ svg text{font-family:var(--mono)}
   <aside class="notes">The Hitchhikers call their trust agent the Towel (hitchhikers.earth, "Why We Carry a Towel"): a small program that holds your keys, says no on your behalf, and keeps the receipts; the software underneath is OpenVTC. And a hitchhiker's trust is "a willingness to be guided" (hitchhikers.earth, "Hitchhiker"). Use the thumb as the analogy, then switch to agents: the same five steps. Then where it leads: a hitchhiker cooperates on guides and guidance (guiding someone, writing a field guide together, the timebank, the local exchange), and each of these is a trust task, recorded as trust built for the community's verifiable trust agents. Between agents, the same tasks open the data beneath evidence leaves over the Trust Spanning Protocol: for autoresearch challenges, guide quality and governance. Trust Tasks (the Trust over IP task force we contribute to) are small, standard requests between parties: vouch for me, show you belong, agree these terms. The Hitchhikers will run their own, local first, on their own node. The thumbs up is the first one, and it sets you on an adventure. Zero knowledge is what makes the last step possible: proving your place in someone's guide or community without revealing who you are or who vouched.</aside>
 </section>
 
+<!-- MyTerms: what it is, and where it appears in the guide -->
+<section class="scene" data-part="IV" data-sec="MyTerms">
+  <div class="kick">IV · Trust by doing</div>
+  <h1><span class="n">4.</span> MyTerms: <b>your terms come first</b></h1>
+  <div class="sub">A standard (IEEE 7012) for the terms a person brings. You offer them, the other side agrees, and both keep the same record.</div>
+  <div style="position:absolute;left:62px;top:290px;width:800px;display:grid;gap:26px">
+    <div class="mt-row"><b>1</b><div><h3>You go first</h3><p>The usual way round is reversed: the person offers the terms, and the site, service or community is the one that agrees.</p></div></div>
+    <div class="mt-row"><b>2</b><div><h3>From a short public list</h3><p>The agreements are standard ones, kept by a neutral non-profit and readable by people and by machines. Nobody has to write, or read, small print.</p></div></div>
+    <div class="mt-row"><b>3</b><div><h3>Both keep the record</h3><p>Each side holds an identical copy of what was agreed, so either can show it later.</p></div></div>
+  </div>
+  <div style="position:absolute;left:940px;top:290px;width:598px">
+    <div class="label" style="color:var(--cobalt);font-weight:700;margin-bottom:12px">Where it appears in this guide</div>
+    <div style="display:grid;gap:10px">
+      <button class="act mt-link" onclick="mtGo('thumb')"><span>The thumbs up · step 3</span><i>Agree the terms: you bring yours, and both sides sign</i></button>
+      <button class="act mt-link" onclick="mtGo('visit')"><span>A visit becomes trust · admission</span><i>The gate reads the traveller's terms</i></button>
+      <button class="act mt-link" onclick="mtGo('ov')"><span>OpenVTC and VTI · a member's path</span><i>They join: the member's agent brings terms to the door</i></button>
+      <button class="act mt-link" onclick="mtGo('flow')"><span>How information flows · your terms</span><i>They travel to the community's node, no further</i></button>
+    </div>
+  </div>
+  <div class="label" style="position:absolute;left:62px;top:712px;width:1476px;color:var(--muted);font-size:14px;line-height:1.7"><b style="color:var(--ink)">Who:</b> Customer Commons keeps the agreements. The MyTerms Alliance (MyData Global with Customer Commons) carries the standard into products.<br><b style="color:var(--ink)">Today:</b> Star Key, in the browser, joins a community by DID and brings your own terms. <b style="color:var(--ink)">Next:</b> an agreements family for Trust Tasks, in review.</div>
+  <aside class="notes">MyTerms is the short name for IEEE 7012, a standard for machine-readable personal privacy terms. It turns the cookie banner around: the person is the first party and offers the terms; the site, service or community is the second party and agrees. The terms are chosen from a short list of standard agreements kept by a neutral non-profit (Customer Commons), in the way Creative Commons keeps its licences, and both sides keep an identical record. The MyTerms Alliance is the second organisation to name: an industry association and partner programme being formed by MyData Global and Customer Commons, on the model of the Wi-Fi Alliance, as the channel for products and services built to the standard. In this guide it is the third step of the thumbs up (agree the terms), the admission beat of a visit, what a member's agent brings when they join, and the "Your terms" line in how information flows: the terms travel to the community's node and no further. Honest status: Star Key carries MyTerms today, where the community offers it; the agreements family for Trust Tasks (IEEE 7012 / MyTerms) is in review, not yet in the spec. Touch a line on the right to jump to that scene.</aside>
+</section>
+
 <!-- field guide: stories become guides in real places (Max's half) -->
 <section class="scene" data-part="IV" data-sec="Field Guide">
   <div class="frame"></div>
@@ -286,7 +316,7 @@ svg text{font-family:var(--mono)}
   <svg id="visit" width="1500" height="520" viewBox="0 0 1500 520" style="left:50px;top:250px"></svg>
   <div style="position:absolute;left:62px;top:200px;display:none"></div>
   <div style="position:absolute;right:62px;top:160px"><button class="act" id="visit-btn" onclick="visitStep()">Next beat →</button></div>
-  <aside class="notes">Six beats, each signed: resolve (find the embassy by its DID), admission (the gate reads your terms), exchange (messages through the mediator), understanding (show you understood the guide), consent (both agree what is recorded), seal (host, visitor and a witness sign). The sealed visit can be issued as a credential, and later shown as a predicate proof: "I visited and understood" without showing who else was there.</aside>
+  <aside class="notes">Six beats, each signed: resolve (find the embassy by its DID), admission (the gate reads your terms: MyTerms), exchange (messages through the mediator), understanding (show you understood the guide), consent (both agree what is recorded), seal (host, visitor and a witness sign). The sealed visit can be issued as a credential, and later shown as a predicate proof: "I visited and understood" without showing who else was there.</aside>
 </section>
 
 <!-- the pathway -->
@@ -401,7 +431,7 @@ svg text{font-family:var(--mono)}
   <h1><span class="n">17.</span> How the <b>pieces fit</b></h1>
   <div class="sub" id="built-sub">Touch one.</div>
   <svg id="built" width="1400" height="480" viewBox="0 0 1400 480" style="left:100px;top:280px"></svg>
-  <aside class="notes">If asked what we have given back: fixes to the OpenVTC setup guide, the Star Key extension (join by DID, agreements), ZKP Task Force work (co-chair), an agreements family in Trust Tasks, and the Pi node kit. Everything goes upstream through issue → PR.</aside>
+  <aside class="notes">If asked what we have given back: fixes to the OpenVTC setup guide, the Star Key extension (join by DID, MyTerms), ZKP Task Force work (co-chair), an agreements family (IEEE 7012 / MyTerms) in Trust Tasks, and the Pi node kit. Everything goes upstream through issue → PR.</aside>
 </section>
 
 <!-- ===== the Hitchhikers' own perspective: "Public Intelligence" deck (12 slides), merged as scenes ===== -->
@@ -590,7 +620,7 @@ svg text{font-family:var(--mono)}
 (function () {
   // two halves: the Hitchhikers (their story, method and ceremonies), then the implementation (OpenVTC + VTI)
   const HH = ['Request', 'Public intelligence', 'Inheritance', 'Method', 'Knowing to doing', 'Principles', 'Consent', 'Ceremonies', 'Field Guide', 'The guide', 'Opportunity', 'Speed of trust', 'Contribute'];
-  const VTI = ['Split', 'OpenVTC', 'Three nodes', 'Flow', 'Privacy', 'Thumbs up', 'Three graphs', 'Trust', 'Games', 'A visit', 'The pathway', 'Cities', 'Evidence', 'Hitchhiker mage', 'Baby Dragon', 'Built'];
+  const VTI = ['Split', 'OpenVTC', 'Three nodes', 'Flow', 'Privacy', 'Thumbs up', 'MyTerms', 'Three graphs', 'Trust', 'Games', 'A visit', 'The pathway', 'Cities', 'Evidence', 'Hitchhiker mage', 'Baby Dragon', 'Built'];
   const PATHS = {
     iiw: ['Cover', ...HH, ...VTI, 'Genesis', 'Discussion', 'Record', 'Close'],
     lightning: ['Cover', 'Request', 'Public intelligence', 'Ceremonies', 'Field Guide', 'Opportunity', 'Contribute', 'Split', 'OpenVTC', 'Thumbs up', 'Discussion', 'Record', 'Genesis', 'Close'],
@@ -598,7 +628,7 @@ svg text{font-family:var(--mono)}
   // where each scene belongs when it is not on the main thread (always inside its own half)
   const PARENT = {'Inheritance': 'Public intelligence', 'Method': 'Public intelligence', 'Knowing to doing': 'Method', 'Principles': 'Method', 'Consent': 'Public intelligence',
     'The guide': 'Field Guide', 'Speed of trust': 'Opportunity',
-    'OpenVTC': 'Split', 'Three nodes': 'OpenVTC', 'Flow': 'OpenVTC', 'Privacy': 'Split', 'Three graphs': 'Thumbs up', 'Trust': 'Thumbs up', 'Games': 'Thumbs up',
+    'OpenVTC': 'Split', 'Three nodes': 'OpenVTC', 'Flow': 'OpenVTC', 'Privacy': 'Split', 'MyTerms': 'Thumbs up', 'Three graphs': 'Thumbs up', 'Trust': 'Thumbs up', 'Games': 'Thumbs up',
     'A visit': 'OpenVTC', 'The pathway': 'OpenVTC', 'Evidence': 'Split', 'Hitchhiker mage': 'Split', 'Cities': 'OpenVTC', 'Baby Dragon': 'Split', 'Built': 'OpenVTC', 'Genesis': 'Close'};
   PATHS.workshop = PATHS.iiw; // older links
   const path = new URLSearchParams(location.search).get('path'), list = PATHS[path], stage = document.getElementById('stage');
@@ -652,7 +682,7 @@ function step(d) { const x = scenes[cur];
   if (x.dataset.branch) { go(origin != null ? origin : idxOf(x.dataset.branch)); origin = null; return; }
   let j = cur + d; while (j >= 0 && j < scenes.length && scenes[j].dataset.branch) j += d; if (j >= 0 && j < scenes.length) go(j); }
 // short names for the deeper scenes, so a part's branches fit on the bar
-const SHORT = {'Opportunity': 'The projects', 'Why local': 'One centre?', 'Privacy': 'Keep or share', 'Built': 'The pieces', 'Three graphs': 'Three graphs', 'Trust': 'Connection and reflection', 'OpenVTC': 'OpenVTC and VTI', 'Flow': 'Information flow', 'Genesis': 'Tonight', 'The guide': 'Owning a guide', 'Games': 'Trust is earned', 'Three nodes': 'Three nodes', 'The pathway': 'One Pi to many', 'Cities': 'Cities', 'A visit': 'A visit', 'Evidence': 'Evidence', 'Public intelligence': 'Public intelligence', 'Inheritance': 'Not from zero', 'Method': 'The method', 'Principles': 'Four principles', 'Speed of trust': 'Speed of trust', 'Consent': 'Consent', 'Ceremonies': 'Ceremonies', 'Split': 'To VTI', 'Baby Dragon': 'Baby Dragon', 'Knowing to doing': 'Knowing to doing', 'Contribute': 'Contribute'};
+const SHORT = {'Opportunity': 'The projects', 'Why local': 'One centre?', 'Privacy': 'Keep or share', 'Built': 'The pieces', 'Three graphs': 'Three graphs', 'MyTerms': 'MyTerms', 'Trust': 'Connection and reflection', 'OpenVTC': 'OpenVTC and VTI', 'Flow': 'Information flow', 'Genesis': 'Tonight', 'The guide': 'Owning a guide', 'Games': 'Trust is earned', 'Three nodes': 'Three nodes', 'The pathway': 'One Pi to many', 'Cities': 'Cities', 'A visit': 'A visit', 'Evidence': 'Evidence', 'Public intelligence': 'Public intelligence', 'Inheritance': 'Not from zero', 'Method': 'The method', 'Principles': 'Four principles', 'Speed of trust': 'Speed of trust', 'Consent': 'Consent', 'Ceremonies': 'Ceremonies', 'Split': 'To VTI', 'Baby Dragon': 'Baby Dragon', 'Knowing to doing': 'Knowing to doing', 'Contribute': 'Contribute'};
 function deeperBar() { const bar = $('#deeper'); if (!bar) return; const x = scenes[cur];
   if (x.dataset.branch) { const back = origin != null ? scenes[origin] : scenes[idxOf(x.dataset.branch)]; bar.innerHTML = `<button onclick="step(-1)">← back to ${titleOf(back).toLowerCase()}</button>`; return; }
   const kids = scenes.filter(y => y.dataset.branch === x.dataset.sec);
@@ -1002,7 +1032,7 @@ function kindsDraw() {
 kindsDraw();
 
 /* ---------- a visit becomes trust: six signed beats ---------- */
-const BEATS = [['Resolve', 'The traveller finds the embassy by its DID: who it is, where its door is.'], ['Admission', 'The gate reads the traveller\'s terms and lets them in, or doesn\'t.'],
+const BEATS = [['Resolve', 'The traveller finds the embassy by its DID: who it is, where its door is.'], ['Admission', 'The gate reads the traveller\'s terms (MyTerms) and lets them in, or doesn\'t.'],
   ['Exchange', 'Messages pass through the mediator, each one signed.'], ['Understanding', 'The traveller shows they understood the guide they came for.'],
   ['Consent', 'Both agree what gets recorded, and what doesn\'t.'], ['Seal', 'Host, traveller and a witness sign. The sealed visit can become a credential: "I visited and understood", shown without showing who else was there.']];
 let beat = 0;
@@ -1190,7 +1220,7 @@ const OVP = [
 const OVS = [
   ['A community stands up', 'A VTA first, then the VTC on top, on hardware it chooses: a Pi, a home node, a host.', 'live'],
   ['A member gets an agent', 'Their own VTA and DID: self-run, or hosted (VTA Farm).', 'live'],
-  ['They join', 'The community\'s join manifest says how: invited, already holding a credential, or reviewed by a keeper.', 'live'],
+  ['They join', 'The community\'s join manifest says how: invited, already holding a credential, or reviewed by a keeper. The member\'s agent can bring their own terms to the door (MyTerms).', 'live'],
   ['A membership credential', 'Issued by the community; a complete membership has two halves: the grant and the member\'s acknowledgement.', 'live'],
   ['Members vouch for each other', 'Relationship credentials: two, one each way, make one edge. In the spec; not yet seen issued by a live community.', 'spec'],
   ['Trust tasks between them', 'Signed, standard requests (trusttasks.org), over TSP, DIDComm or HTTPS. A ToIP working draft.', 'spec']];
@@ -1382,7 +1412,7 @@ function roadDraw() {
       s.append(el('text', {x: (A[0] + B[0]) / 2, y: y2 - 12, 'text-anchor': 'middle', 'font-size': 14, 'font-weight': 700, fill: col}, label)); };
     if (tStep >= 0) msg(1, 'TRUST TASK · REQUEST', 170, '#1F4BFF');
     if (tStep >= 1) msg(-1, 'OFFER · ON THEIR TERMS', 230, '#0D0D0F');
-    if (tStep >= 2) { msg(1, 'TERMS · SIGNED BY BOTH', 290, '#1F4BFF'); }
+    if (tStep >= 2) { msg(1, 'MYTERMS · SIGNED BY BOTH', 290, '#1F4BFF'); }
     if (tStep >= 3) msg(-1, 'DONE · SIGNED RECEIPT', 350, '#0D0D0F');
     if (tStep >= 4) { s.append(el('rect', {x: 470, y: 400, width: 560, height: 70, rx: 6, fill: '#0B0B0D'})); s.append(el('text', {x: 500, y: 432, 'font-size': 17, fill: '#F6F1E6', 'font-weight': 700}, '✓ PROVED: I BELONG TO THIS COMMUNITY')); s.append(el('text', {x: 500, y: 456, 'font-size': 13, fill: '#8EA4FF'}, 'REVEALED: NOTHING ELSE. NOT WHO, NOT WHO VOUCHED.')); }
     return;
@@ -1411,7 +1441,7 @@ function roadDraw() {
   [-56, 76].forEach(x => { car.append(el('circle', {cx: x, cy: -12, r: 15, fill: '#0D0D0F'})); car.append(el('circle', {cx: x, cy: -12, r: 6, fill: '#8A857A'})); });
   if (away) car.append(el('circle', {cx: 4, cy: -70, r: 9, fill: '#0D0D0F'}));
   if (tStep === 1) { s.append(el('rect', {x: 700, y: 140, width: 150, height: 44, rx: 8, fill: '#F6F1E6', stroke: '#0D0D0F', 'stroke-width': 1.5})); s.append(el('text', {x: 775, y: 169, 'text-anchor': 'middle', 'font-size': 18}, '"WHERE TO?"')); }
-  if (tStep === 2) { s.append(el('rect', {x: 560, y: 120, width: 240, height: 70, rx: 4, fill: '#F6F1E6', stroke: '#1F4BFF', 'stroke-width': 2})); s.append(el('text', {x: 680, y: 150, 'text-anchor': 'middle', 'font-size': 15, fill: '#1F4BFF', 'font-weight': 700}, 'TERMS · SIGNED BY BOTH')); s.append(el('text', {x: 680, y: 174, 'text-anchor': 'middle', 'font-size': 13, fill: '#0D0D0F'}, 'TO THE COAST · SHARE FUEL')); }
+  if (tStep === 2) { s.append(el('rect', {x: 560, y: 120, width: 240, height: 70, rx: 4, fill: '#F6F1E6', stroke: '#1F4BFF', 'stroke-width': 2})); s.append(el('text', {x: 680, y: 150, 'text-anchor': 'middle', 'font-size': 15, fill: '#1F4BFF', 'font-weight': 700}, 'MYTERMS · SIGNED BY BOTH')); s.append(el('text', {x: 680, y: 174, 'text-anchor': 'middle', 'font-size': 13, fill: '#0D0D0F'}, 'TO THE COAST · SHARE FUEL')); }
   if (tStep >= 4) { s.append(el('rect', {x: 180, y: 110, width: 520, height: 96, rx: 6, fill: '#0B0B0D'}));
     s.append(el('text', {x: 210, y: 150, 'font-size': 20, fill: '#F6F1E6', 'font-weight': 700}, '✓ PROVED: I TRAVELLED WITH A HITCHHIKER'));
     s.append(el('text', {x: 210, y: 182, 'font-size': 14, fill: '#8EA4FF'}, 'REVEALED: NOTHING ELSE. NOT WHO, NOT WHO VOUCHED.')); }
@@ -1680,6 +1710,13 @@ function sotDraw() {
   $('#sot-earn').textContent = sotN >= SOT_L.length ? 'Start again ↺' : 'Earn a link →';
 }
 sotDraw();
+
+/* ---------- MyTerms: jump to where it appears, opened at the right step ---------- */
+const MT_AT = {thumb: ['Thumbs up', () => { if (tMode !== 'h') thumbMode('h'); thumbGo(2); }], visit: ['A visit', () => { beat = 1; visitDraw(); }],
+  ov: ['OpenVTC', () => { ovMode = 1; ovSel = 12; ovDraw(); }], flow: ['Flow', () => flowPick('Your terms')]};
+function mtGo(k) { const [sec, open] = MT_AT[k], i = idxOf(sec); if (i < 0) return;
+  if (scenes[i].dataset.branch) branch(sec, cur); else go(i);
+  open(); }
 
 /* ---------- slide 7: chat is the interface, consent is the authority ---------- */
 const CS_SUB = ['A conversation with your agent. It helps you think, draft and plan.',
