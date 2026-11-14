@@ -6,14 +6,15 @@
   const css = document.createElement('style');
   css.textContent = `#tu{position:absolute;right:24px;top:7px;z-index:7;display:flex;align-items:center;gap:8px;font-family:"Space Mono",Consolas,monospace}
 #tu button{width:42px;height:42px;border-radius:50%;border:1.5px solid #1F4BFF;background:#F6F1E6;font-size:20px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.12);transition:transform .15s}
-#tu button:hover{transform:scale(1.08)}#tu button:active{transform:scale(.94)}#tu button[disabled]{opacity:.5;cursor:wait}
+#tu .towel{width:42px;height:42px;border-radius:50%;border:1.5px solid #1F4BFF;background:#F6F1E6;font-size:20px;display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+#tu button:hover,#tu .towel:hover{transform:scale(1.08)}#tu button:active{transform:scale(.94)}#tu button[disabled]{opacity:.5;cursor:wait}
 #tu .msg{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#1F4BFF;background:#F6F1E6;padding:4px 8px;border-radius:3px;opacity:0;transition:opacity .3s}
 #tu .msg.on{opacity:1}
 #tu .burst{position:absolute;right:12px;top:30px;font-size:20px;pointer-events:none;animation:tuup 1.2s ease-out forwards}
 @keyframes tuup{to{transform:translateY(60px);opacity:0}}`;
   document.head.append(css);
   const box = document.createElement('div'); box.id = 'tu';
-  box.innerHTML = '<span class="msg"></span><button title="Thumbs up: add your star to the guide">👍</button>';
+  box.innerHTML = '<span class="msg"></span><a class="towel" href="/towel/" title="My towel: your identity, your stars and voice notes" aria-label="My towel">🧣</a><button title="Thumbs up: add your star to the guide">👍</button>';
   host.append(box);
   const btn = box.querySelector('button'), msg = box.querySelector('.msg'); let t;
   const say = (s, ms) => { msg.textContent = s; msg.classList.add('on'); clearTimeout(t); t = setTimeout(() => msg.classList.remove('on'), ms || 2600); };
