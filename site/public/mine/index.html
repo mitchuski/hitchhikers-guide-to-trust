@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/star.svg" type="image/svg+xml">
+<title>My guidance · Hitchhiker's Guide to Trust</title>
+<meta name="description" content="Everything you left on the guide, from this phone: your stars, your voice notes, your constellation. Play or download your own notes, and share one with the keeper if you choose.">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* My guidance: one page per person, built only from what this phone can prove is its own (its mark), and the public chain.
+   Nothing here is stored on the Pi that the Pi could read: voice notes stay sealed to this phone; a shared copy is sealed to the keeper. */
+:root{--paper:#EFE9DC;--off:#F6F1E6;--ink:#0D0D0F;--cobalt:#1F4BFF;--pale:#8EA4FF;--muted:#5E5A50;--line:rgba(13,13,15,.18);--red:#C0392B;--green:#2E8B57;
+--head:Anton,Impact,"Arial Narrow Bold",sans-serif;--body:"Space Grotesk","Segoe UI",Arial,sans-serif;--mono:"Space Mono",Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 var(--body);background-image:radial-gradient(rgba(13,13,15,.07) 1px,transparent 1.2px);background-size:7px 7px}
+main{max-width:980px;margin:0 auto;padding:20px 16px 80px}
+.top{display:flex;justify-content:space-between;gap:14px;font:700 12px var(--mono);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--line);padding-bottom:8px}
+.top a{color:var(--cobalt);text-decoration:none}
+h1{font:400 clamp(44px,9vw,84px)/.92 var(--head);text-transform:uppercase;margin:22px 0 8px}h1 em{font-style:normal;color:var(--cobalt)}
+.who{font:14px var(--mono);margin:6px 0 16px}.who b{font-size:22px;letter-spacing:.05em}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:18px;align-items:start}
+.sky{position:relative;background:#0B0B0D;border-radius:10px;aspect-ratio:1/1;overflow:hidden}.sky canvas{width:100%;height:100%;display:block}
+.sky .cap{position:absolute;left:12px;bottom:10px;font:11px var(--mono);color:#8EA4FF}
+.it{background:var(--off);border:1.5px solid var(--line);border-left:5px solid var(--ink);border-radius:5px;padding:10px 12px;margin-bottom:8px}
+.it.k-voice{border-left-color:var(--red)}.it.k-thumb{border-left-color:var(--cobalt)}.it.k-share{border-left-color:var(--green)}
+.row{display:flex;justify-content:space-between;gap:8px;font:700 11px var(--mono);text-transform:uppercase;letter-spacing:.05em}.meta{font:12px var(--mono);color:var(--muted)}
+.acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.acts button,.acts a,.btn{font:700 12px var(--mono);text-transform:uppercase;border:1.5px solid var(--cobalt);background:var(--off);color:var(--cobalt);border-radius:20px;padding:6px 11px;cursor:pointer;text-decoration:none}
+.acts .share{border-color:var(--green);color:var(--green)}.ok{font:700 12px var(--mono);color:var(--green)}
+audio{width:100%;margin-top:8px}
+.note{font:12px/1.55 var(--mono);color:var(--muted);margin-top:14px}
+.empty{padding:16px;border:1.5px dashed var(--line);border-radius:6px}
+@media (max-width:760px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+  <div class="top"><span>The Hitchhiker's Guide to Trust</span><span><a href="../chain/">The evidence chain →</a></span></div>
+  <h1>My <em>guidance</em>.</h1>
+  <div class="who" id="who">Reading this phone's mark…</div>
+  <div class="grid">
+    <div class="sky"><canvas id="c"></canvas><div class="cap">your constellation · each link placed by its hash on the Star's 64 states</div></div>
+    <div><div id="list"></div><div class="acts" style="margin-top:4px"><button class="btn" id="exp">Export my guidance</button></div></div>
+  </div>
+  <p class="note">Your mark lives in this phone's browser; this page lists what that mark left on the public chain. Your voice notes stay sealed to this phone: only it can play or download them. <b>Share with the keeper</b> seals one copy to the keeper's key, which never lives on the Pi, so the keeper can listen to that note, and only that note, to improve the guide.</p>
+</main>
+<script src="../mark.js"></script>
+<script>
+const $ = s => document.querySelector(s), esc = s => String(s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+const API = (window.DP && DP.api) || '';
+const b64 = u => { let s = ''; for (let i = 0; i < u.length; i += 8192) s += String.fromCharCode(...u.subarray(i, i + 8192)); return btoa(s); };
+const hexOf = async u8 => [...new Uint8Array(await crypto.subtle.digest('SHA-256', u8))].map(x => x.toString(16).padStart(2, '0')).join('');
+const NAME = {thumb: 'Star', voice: 'Voice note', share: 'Shared with the keeper', claim: 'Claim', meet: 'Meeting', proverb: 'Proverb', guide: 'Guide', poem: 'Poem'};
+let MARK = '', LINKS = [], ALL = [];
+
+async function loadChain() { const out = []; let since = 0;
+  for (let i = 0; i < 20; i++) { const d = await (await fetch(API + '/api/chain?since=' + since, {cache: 'no-store'})).json(); out.push(...d.links); since += d.links.length; if (!d.links.length || since >= d.length) break; }
+  return out; }
+const shared = v => ALL.some(l => l.kind === 'share' && l.voice === v && l.mark === MARK);
+
+async function boot() {
+  if (!window.DP) { $('#who').textContent = 'This page needs the guide’s mark script.'; return; }
+  MARK = await DP.mark();
+  ALL = await loadChain(); LINKS = ALL.filter(l => l.mark === MARK && l.kind !== 'genesis');
+  let ev = {}; try { ev = await (await fetch(API + '/api/evidence?mark=' + MARK, {cache: 'no-store'})).json(); } catch (e) {}
+  $('#who').innerHTML = `<b>${DP.sigil(MARK)}</b> · ${esc(DP.spell(MARK))} · ${LINKS.length} link${LINKS.length === 1 ? '' : 's'}${ev.root ? ' · evidence root ' + ev.root.slice(0, 16) + '…' : ''}`;
+  render(); draw();
+}
+
+function render() {
+  $('#list').innerHTML = LINKS.slice().reverse().map(l => {
+    const tags = [l.as, l.where].filter(Boolean).join(' · '), when = (l.at || '').slice(0, 16).replace('T', ' ');
+    let acts = '';
+    if (l.kind === 'voice') acts = `<div class="acts"><button data-act="play" data-v="${l.voice}">▶ Play</button><button data-act="dl" data-v="${l.voice}" data-s="${l.seq}">⬇ Download</button>${shared(l.voice) ? '<span class="ok">⇪ shared with the keeper</span>' : `<button class="share" data-act="share" data-v="${l.voice}">⇪ Share with the keeper</button>`}</div><audio id="a${l.seq}" controls style="display:none"></audio>`;
+    return `<div class="it k-${esc(l.kind)}"><div class="row"><span>${NAME[l.kind] || esc(l.kind)}${l.secs ? ' · ' + l.secs + ' s' : ''}${tags ? ' · ' + esc(tags) : ''}</span><span>#${l.seq} · ${DP.sigil(l.hash)}</span></div><div class="meta">${esc(l.event || '')} · ${when}</div>${acts}</div>`;
+  }).join('') || '<div class="empty">Nothing from this phone yet. Give a thumbs up or record a voice note in the guide, and it appears here.</div>';
+  document.querySelectorAll('[data-act]').forEach(b => b.onclick = () => act(b));
+}
+
+async function unlock(voice) { const box = await (await fetch(API + '/api/voice?id=' + voice)).json(), all = await DP.openBytes(box); if (!all) return null;
+  const nl = all.indexOf(10); return {all, type: new TextDecoder().decode(all.slice(0, nl)), audio: all.slice(nl + 1)}; }
+
+async function act(b) {
+  const voice = b.dataset.v, label = b.textContent; b.disabled = true; b.textContent = '…';
+  try {
+    const n = await unlock(voice); if (!n) { b.textContent = 'not this phone\'s'; return; }
+    if (b.dataset.act === 'play') { const l = LINKS.find(x => x.voice === voice), a = $('#a' + l.seq); a.src = URL.createObjectURL(new Blob([n.audio], {type: n.type})); a.style.display = ''; a.play(); b.textContent = label; }
+    else if (b.dataset.act === 'dl') { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([n.audio], {type: n.type})); a.download = 'voice-note-' + b.dataset.s + (/mp4/.test(n.type) ? '.m4a' : '.webm'); document.body.append(a); a.click(); setTimeout(() => a.remove(), 500); b.textContent = label; }
+    else if (b.dataset.act === 'share') {
+      const jwk = await (await fetch('/keeper.pub.jwk', {cache: 'no-store'})).json();
+      const pub = await crypto.subtle.importKey('jwk', jwk, {name: 'RSA-OAEP', hash: 'SHA-256'}, false, ['encrypt']);
+      const key = await crypto.subtle.generateKey({name: 'AES-GCM', length: 256}, true, ['encrypt']), iv = crypto.getRandomValues(new Uint8Array(12));
+      const ct = new Uint8Array(await crypto.subtle.encrypt({name: 'AES-GCM', iv}, key, n.all));
+      const wrapped = new Uint8Array(await crypto.subtle.encrypt({name: 'RSA-OAEP'}, pub, await crypto.subtle.exportKey('raw', key)));
+      const r = await fetch(API + '/api/voice/share', {method: 'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify({mark: MARK, voice, audioHash: await hexOf(n.audio), iv: b64(iv), ct: b64(ct), wrapped: b64(wrapped)})});
+      const d = await r.json().catch(() => ({})); if (!r.ok) { b.textContent = d.error || 'did not go through'; return; }
+      ALL.push(d.link); LINKS.push(d.link); render(); draw();
+    }
+  } catch (e) { b.textContent = 'try again'; } finally { b.disabled = false; }
+}
+
+$('#exp').onclick = () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify({kind: 'hitchhikers/my-guidance', mark: MARK, sigil: DP.sigil(MARK), spell: DP.spell(MARK), links: LINKS}, null, 2)], {type: 'application/json'})); a.download = 'my-guidance.json'; a.click(); };
+
+/* the constellation: the Star's two tetrahedra and 64 states, your links placed by hash (as on the chain page) */
+const bits = (hx, from, n) => { let v = 0; for (let i = 0; i < n; i++) { const c = parseInt(hx[(from + i) >> 2], 16), b = (c >> (3 - ((from + i) & 3))) & 1; v = v * 2 + b; } return v; };
+const CV = b => [(b & 1) ? 1 : -1, (b & 2) ? 1 : -1, (b & 4) ? 1 : -1], par = h => (h ^ (h >> 1) ^ (h >> 2)) & 1;
+const xyz = hx => { const house = bits(hx, 0, 3), sub = bits(hx, 3, 3), j = [bits(hx, 6, 3), bits(hx, 9, 3), bits(hx, 12, 3)], H = CV(house), S = CV(sub); return [0, 1, 2].map(i => H[i] + S[i] * .3 + (j[i] - 3.5) * .02); };
+const STELLA = [[0, 3], [0, 5], [0, 6], [3, 5], [3, 6], [5, 6], [1, 2], [1, 4], [1, 7], [2, 4], [2, 7], [4, 7]];
+const cv = $('#c'), g = cv.getContext('2d'); let W, H, D, yaw = .6;
+function size() { D = Math.min(2, devicePixelRatio || 1); W = cv.width = cv.clientWidth * D; H = cv.height = cv.clientHeight * D; }
+addEventListener('resize', size); size();
+const proj = p => { const cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(-.32), sp = Math.sin(-.32), x = p[0] * cy + p[2] * sy, z0 = -p[0] * sy + p[2] * cy, y = p[1] * cp - z0 * sp, z = p[1] * sp + z0 * cp, sc = Math.min(W, H) * .24 / (1 + z * .12); return {x: W / 2 + x * sc, y: H / 2 + y * sc}; };
+const COL = {thumb: '246,241,230', voice: '230,80,80', share: '120,220,170'};
+function draw() { cancelAnimationFrame(draw.r); (function f() { yaw += .002; g.fillStyle = '#0B0B0D'; g.fillRect(0, 0, W, H);
+  g.lineWidth = 1.2 * D; STELLA.forEach(([u, v]) => { const a = proj(CV(u)), b = proj(CV(v)); g.strokeStyle = par(u) ? 'rgba(246,241,230,.3)' : 'rgba(61,99,255,.55)'; g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(b.x, b.y); g.stroke(); });
+  const Q = LINKS.map(l => proj(xyz(l.hash))); g.strokeStyle = 'rgba(232,200,115,.5)'; g.beginPath(); for (let i = 1; i < Q.length; i++) { g.moveTo(Q[i - 1].x, Q[i - 1].y); g.lineTo(Q[i].x, Q[i].y); } g.stroke();
+  LINKS.forEach((l, i) => { g.fillStyle = 'rgba(' + (COL[l.kind] || '142,164,255') + ',.95)'; g.beginPath(); g.arc(Q[i].x, Q[i].y, 3.4 * D, 0, 6.283); g.fill(); });
+  draw.r = requestAnimationFrame(f); })(); }
+boot().catch(e => { $('#who').textContent = 'Could not read the chain: ' + e.message; });
+</script>
+</body>
+</html>

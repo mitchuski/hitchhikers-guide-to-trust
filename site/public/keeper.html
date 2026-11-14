@@ -42,6 +42,10 @@ button.no{border-color:var(--red);color:var(--red)}
   <div id="screens"></div>
   <h2>Offered to Hitchhiker FM</h2>
   <div id="fm"></div>
+  <h2>Shared with the keeper</h2>
+  <p class="micro">Voice notes their owners chose to share, sealed to the keeper key. Load the private key file (keeper.private.jwk); it stays in this page's memory and is never sent anywhere.</p>
+  <p><input type="file" id="kfile" accept=".jwk,.json"> <span id="kmsg" class="micro"></span></p>
+  <div id="kshares"></div>
   <h2>Approved <span id="na"></span></h2>
   <p><button onclick="exportWiki()">Export as wiki pages</button> <button onclick="exportDrafts()">Export Field Guide drafts</button> <span class="micro">Federated Wiki JSON: a "Don't Panic" page plus one page per new guide</span></p>
   <div id="approved"></div>
@@ -73,11 +77,25 @@ async function extras() {
   try { const f = await api('fm'); $('#fm').innerHTML = (f.proverbs.map(x => `<div class="row"><div><div class="kind">proverb · ${esc(NIGHTS[x.event] || x.event || '')}</div>${esc(x.text)}${x.by ? ' · ' + esc(x.by) : ''}</div></div>`).join('')
       + f.voices.map(v => `<div class="row"><div><div class="kind">voice note${v.as ? ' · ' + esc(v.as) : ''}${v.where ? ' · ' + esc(v.where) : ''} · ${v.secs} s · ${esc(NIGHTS[v.event] || v.event || '')}</div><button onclick="playFm('${v.id}', this)">▶ listen</button></div></div>`).join('')) || '<p class="micro">Nothing offered yet.</p>'; } catch (e) {}
 }
+let KPRIV = null;
+const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+document.getElementById('kfile').addEventListener('change', async ev => { try { const jwk = JSON.parse(await ev.target.files[0].text()); KPRIV = await crypto.subtle.importKey('jwk', jwk, {name: 'RSA-OAEP', hash: 'SHA-256'}, false, ['decrypt']); $('#kmsg').textContent = 'keeper key loaded (in memory only)'; } catch (e) { $('#kmsg').textContent = 'not a keeper key'; } });
+async function shares() { try { const {shares} = await api('kshares'); $('#kshares').innerHTML = shares.slice().reverse().map(v => `<div class="row"><div><div class="kind">voice note${v.as ? ' · ' + esc(v.as) : ''}${v.where ? ' · ' + esc(v.where) : ''} · ${v.secs || '?'} s · ${esc(NIGHTS[v.event] || v.event || '')} · shared ${esc((v.at || '').slice(0, 16).replace('T', ' '))}</div><button onclick="openShare('${v.voice}', this)">▶ Unlock</button> <span id="ks${v.voice.slice(0, 12)}" class="micro"></span></div></div>`).join('') || '<p class="micro">None shared yet.</p>'; } catch (e) {} }
+async function openShare(voice, b) {
+  const out = $('#ks' + voice.slice(0, 12)); if (!KPRIV) { out.textContent = 'load the keeper key first'; return; }
+  try { const k = await api('kshare', {voice}); const raw = await crypto.subtle.decrypt({name: 'RSA-OAEP'}, KPRIV, unb64(k.wrapped));
+    const key = await crypto.subtle.importKey('raw', raw, 'AES-GCM', false, ['decrypt']), all = new Uint8Array(await crypto.subtle.decrypt({name: 'AES-GCM', iv: unb64(k.iv)}, key, unb64(k.ct)));
+    const nl = all.indexOf(10), type = new TextDecoder().decode(all.slice(0, nl)), audio = all.slice(nl + 1);
+    const h = [...new Uint8Array(await crypto.subtle.digest('SHA-256', audio))].map(x => x.toString(16).padStart(2, '0')).join('');
+    if (h !== k.audioHash) { out.textContent = 'REFUSED: the copy does not match the hash on the chain'; return; }
+    const url = URL.createObjectURL(new Blob([audio], {type})); new Audio(url).play();
+    out.innerHTML = 'checked against the chain · <a download="shared-' + voice.slice(0, 12) + (/mp4/.test(type) ? '.m4a' : '.webm') + '" href="' + url + '">download</a>'; b.textContent = '▶ playing';
+  } catch (e) { out.textContent = 'could not open (not sealed to this key?)'; } }
 async function playFm(id, b) { try { const v = await api('fmvoice', {id}); const a = new Audio('data:' + v.type + ';base64,' + v.b64); a.play(); b.textContent = '▶ playing'; } catch (e) { b.textContent = 'could not play'; } }
 async function exportDrafts() { try { const d = await api('drafts'); const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(d, null, 1)], {type: 'application/json'})); a.download = 'field-guide-drafts.json'; a.click(); } catch (e) { $('#msg').textContent = e.message; } }
 async function exportWiki() { try { const pages = await api('export'); const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(pages, null, 1)], {type: 'application/json'})); a.download = 'hitchhiker-guides-wiki-pages.json'; a.click(); } catch (e) { $('#msg').textContent = e.message; } }
 $('#key').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
-refresh(); setInterval(refresh, 10000);
+refresh(); shares(); setInterval(() => { refresh(); shares(); }, 10000);
 </script>
 </body>
 </html>

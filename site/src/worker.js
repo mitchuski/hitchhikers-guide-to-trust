@@ -274,6 +274,25 @@ async function api(req, env, path, body) {
     const link = await addLink(env, ev, 'voice', [id, as, where].filter(Boolean).join('|'), body.mark, null, { voice: id, secs, ...(as ? { as } : {}), ...(where ? { where } : {}), ...(offer ? { fm: true } : {}) });
     return link ? json({ ok: true, link }) : json({ error: 'The chain is full tonight.' }, 503);
   }
+  // share a voice note with the keeper, after the fact and by choice: the phone unlocks its own note, seals a copy
+  // to the keeper's public key (/keeper.pub.jwk), and sends only that. The Pi stores the keeper-sealed copy, which it
+  // cannot open; the keeper opens it with a private key that never lives here. The audio's sha256 goes on the chain,
+  // so the keeper can check the copy is the note that was shared. Only notes on the chain under the same mark.
+  if (path === '/api/voice/share' && req.method === 'POST') {
+    if (!isMark(body.mark)) return json({ error: 'Open the page again to make your mark.' }, 400);
+    const voice = String(body.voice || ''), audioHash = String(body.audioHash || ''), iv = String(body.iv || ''), ct = String(body.ct || ''), wrapped = String(body.wrapped || '');
+    if (!/^[0-9a-f]{64}$/.test(voice) || !/^[0-9a-f]{64}$/.test(audioHash)) return json({ error: 'Give the note and its audio hash.' }, 400);
+    if (iv.length > 24 || !ct || ct.length > VOICE_MAX_B64 || !wrapped || wrapped.length > 1200 || !/^[A-Za-z0-9+/=]+$/.test(iv + ct + wrapped)) return json({ error: 'That copy is not sealed right.' }, 400);
+    if (await limited(env, req)) return json({ error: 'Slow down a moment, then try again.' }, 429);
+    const chain = await chainOf(env), note = chain.find(l => l.kind === 'voice' && l.voice === voice);
+    if (!note || note.mark !== body.mark) return json({ error: 'That note is not yours on this guide.' }, 403);
+    if (await env.PROVERBS.get('kshare:' + voice)) return json({ error: 'Already shared with the keeper.' }, 409);
+    await env.PROVERBS.put('kshare:' + voice, JSON.stringify({ iv, ct, wrapped, audioHash }));
+    const q = await load(env, 'kshareq'); q.push({ voice, audioHash, secs: note.secs, event: note.event, at: new Date().toISOString(), ...(note.as ? { as: note.as } : {}), ...(note.where ? { where: note.where } : {}) }); await save(env, 'kshareq', q);
+    const link = await addLink(env, note.event || ev, 'share', voice + '|' + audioHash, body.mark, null, { voice, audioHash });
+    return link ? json({ ok: true, link }) : json({ error: 'The chain is full tonight.' }, 503);
+  }
+
   if (path === '/api/voice' && req.method === 'GET') {
     const id = url.searchParams.get('id'); if (!/^[0-9a-f]{64}$/.test(String(id || ''))) return json({ error: 'Give a voice id.' }, 400);
     const box = await env.PROVERBS.get('voice:' + id, 'json'); return box ? json(box) : json({ error: 'Not found.' }, 404);
@@ -301,6 +320,8 @@ async function api(req, env, path, body) {
     if (action === 'export') return json(wikiPages(approved, GUIDE(env).name));
     if (action === 'screen') return json({ key: await witnessKey(env), nights: Object.keys(EV) });
     if (action === 'fm') return json({ proverbs: queue.concat(approved).filter(x => x.fm && !x.hidden), voices: await load(env, 'fmq') });
+    if (action === 'kshares') return json({ shares: await load(env, 'kshareq') });
+    if (action === 'kshare') { const v = await env.PROVERBS.get('kshare:' + String(body.voice || ''), 'json'); return v ? json(v) : json({ error: 'Not found.' }, 404); }
     if (action === 'fmvoice') { const v = await env.PROVERBS.get('fm:' + String(body.id || ''), 'json'); return v ? json(v) : json({ error: 'Not found.' }, 404); }
     // guides as Field Guide drafts: a name, a place, a first clue; ready to import once the studio's format is agreed
     if (action === 'drafts') return json(approved.filter(x => x.kind === 'guide' && !x.hidden).map(x => ({ title: x.title, place: x.place || '', firstClue: x.text, by: x.by || '', night: (EV[x.event] || {}).name || '', at: x.at })));
